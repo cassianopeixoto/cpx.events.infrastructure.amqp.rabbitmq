@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CPX.Events.Infrastructure.AMQP.RabbitMQ.Abstract\CPX.Events.Infrastructure.AMQP.RabbitMQ.Abstract.csproj" />
+    <ProjectReference Include="..\..\..\cpx.events.infrastructure.amqp.abstract\src\CPX.Events.Infrastructure.AMQP.Abstract\CPX.Events.Infrastructure.AMQP.Abstract.csproj" />
   </ItemGroup>
 
   <ItemGroup>

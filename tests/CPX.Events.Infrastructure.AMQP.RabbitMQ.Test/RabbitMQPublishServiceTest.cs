@@ -5,6 +5,21 @@ namespace CPX.Events.Infrastructure.AMQP.RabbitMQ.Test;
 public sealed class RabbitMQPublishServiceTest
 {
     [Fact]
+    public void Should_not_be_able_to_instantiate_with_null_rabbit_mq_connection()
+    {
+        // Arrange
+        var serviceBusName = "serviceBusName";
+        var serviceName = "serviceName";
+        IRabbitMQConnection? rabbitMQConnection = null;
+        // Act
+        // Assert
+        Assert.Throws<ArgumentNullException>(() =>
+        {
+            new RabbitMQPublishService(serviceBusName, serviceName, rabbitMQConnection);
+        });
+    }
+
+    [Fact]
     public void Should_be_able_to_publish_event()
     {
         // Arrange

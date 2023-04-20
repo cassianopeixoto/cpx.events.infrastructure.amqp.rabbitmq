@@ -1,6 +1,5 @@
 using CPX.Events.Infrastructure.AMQP.Abstract;
 using CPX.Events.Infrastructure.AMQP.RabbitMQ.Mocks;
-using RabbitMQ.Client.Events;
 
 namespace CPX.Events.Infrastructure.AMQP.RabbitMQ.Test;
 

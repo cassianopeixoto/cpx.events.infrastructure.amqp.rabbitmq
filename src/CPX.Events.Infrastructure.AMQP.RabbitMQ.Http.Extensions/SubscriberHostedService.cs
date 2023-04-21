@@ -10,8 +10,10 @@ public sealed class SubscriberHostedService : IHostedService
 
     private readonly IDictionary<Type, string> configuration;
 
-    public SubscriberHostedService(ISubscribeService subscribeService, IDictionary<Type, string> configuration)
+    public SubscriberHostedService(ISubscribeService? subscribeService, IDictionary<Type, string> configuration)
     {
+        if (subscribeService is null) throw new ArgumentNullException(nameof(subscribeService));
+
         this.subscribeService = subscribeService;
         this.configuration = configuration;
     }

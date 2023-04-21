@@ -14,12 +14,11 @@ public sealed class RabbitMQSubscriberServiceTest
         IRabbitMQConnection? rabbitMQConnection = null;
         var mockServiceProvider = new Mock<IServiceProvider>();
         var serviceProvider = mockServiceProvider.Object;
-        var maxSeconds = 1;
         // Act
         // Assert
         Assert.Throws<ArgumentNullException>(() =>
         {
-            new RabbitMQSubscriberService(serviceBusName, serviceName, rabbitMQConnection, serviceProvider, maxSeconds);
+            new RabbitMQSubscriberService(serviceBusName, serviceName, rabbitMQConnection, serviceProvider);
         });
     }
 
@@ -32,12 +31,11 @@ public sealed class RabbitMQSubscriberServiceTest
         var mockRabbitMQConnection = new Mock<IRabbitMQConnection>();
         IRabbitMQConnection? rabbitMQConnection = mockRabbitMQConnection.Object;
         IServiceProvider? serviceProvider = null;
-        var maxSeconds = 1;
         // Act
         // Assert
         Assert.Throws<ArgumentNullException>(() =>
         {
-            new RabbitMQSubscriberService(serviceBusName, serviceName, rabbitMQConnection, serviceProvider, maxSeconds);
+            new RabbitMQSubscriberService(serviceBusName, serviceName, rabbitMQConnection, serviceProvider);
         });
     }
 
@@ -48,6 +46,8 @@ public sealed class RabbitMQSubscriberServiceTest
         var serviceBusName = "serviceBusName";
         var serviceName = "serviceName";
         var routingKey = "routingKey";
+        var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
 
         var exchangeName = GetExchangeName(serviceBusName, serviceName);
         var exchangeDlqName = GetExchangeName(serviceBusName, serviceName, true);
@@ -68,7 +68,8 @@ public sealed class RabbitMQSubscriberServiceTest
         })
         .QueueBind(mockChannel, queueName, exchangeName, routingKey)
         .BasicQos(mockChannel)
-        .BasicConsume(mockChannel, queueName);
+        .BasicConsume(mockChannel, queueName)
+        .Close(mockChannel);
 
         var channel = mockChannel.Object;
 
@@ -79,8 +80,9 @@ public sealed class RabbitMQSubscriberServiceTest
         var mockServiceProvider = new Mock<IServiceProvider>();
         var serviceProvider = mockServiceProvider.Object;
         // Act
-        var subscriberService = new RabbitMQSubscriberService(serviceBusName, serviceName, connection, serviceProvider, 1);
-        subscriberService.Subscribe<FooEvent>(routingKey);
+        var subscriberService = new RabbitMQSubscriberService(serviceBusName, serviceName, connection, serviceProvider);
+        subscriberService.Subscribe<FooEvent>(routingKey, cancellationToken);
+        subscriberService.Dispose();
         // Assert
         Assert.IsAssignableFrom<ISubscribeService>(subscriberService);
         Assert.IsAssignableFrom<RabbitMQService>(subscriberService);
@@ -121,6 +123,12 @@ public sealed class RabbitMQSubscriberServiceTest
     private RabbitMQSubscriberServiceTest BasicConsume(Mock<IModel> mockChannel, string queueName)
     {
         mockChannel.Setup(o => o.BasicConsume(queueName, false, It.IsAny<string>(), false, false, null, It.IsAny<IBasicConsumer>())).Verifiable();
+        return this;
+    }
+
+    private RabbitMQSubscriberServiceTest Close(Mock<IModel> mockChannel)
+    {
+        mockChannel.Setup(o => o.Close()).Verifiable();
         return this;
     }
 

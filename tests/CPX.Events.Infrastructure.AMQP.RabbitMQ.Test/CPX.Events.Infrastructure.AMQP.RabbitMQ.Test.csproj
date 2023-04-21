@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\src\CPX.Events.Infrastructure.AMQP.RabbitMQ\CPX.Events.Infrastructure.AMQP.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\..\cpx.events.abstract\src\CPX.Events.Abstract\CPX.Events.Abstract.csproj" />
     <ProjectReference Include="..\..\..\cpx.events.infrastructure.amqp.abstract\src\CPX.Events.Infrastructure.AMQP.Abstract\CPX.Events.Infrastructure.AMQP.Abstract.csproj" />
+    <ProjectReference Include="..\..\src\CPX.Events.Infrastructure.AMQP.RabbitMQ.Http.Extensions\CPX.Events.Infrastructure.AMQP.RabbitMQ.Http.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

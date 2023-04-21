@@ -23,7 +23,7 @@ public sealed class RabbitMQPublishService : RabbitMQService, IPublishService
     {
         var basicProperties = channel.CreateBasicProperties();
         basicProperties.Headers = new Dictionary<string, object> {
-            {"origin-service-name", base.serviceName }
+            {"origin-service-name", serviceName }
         };
         basicProperties.Persistent = true;
         return basicProperties;

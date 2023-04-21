@@ -11,19 +11,21 @@ public sealed class RabbitMQSubscriberService : RabbitMQService, ISubscribeServi
 {
     private readonly IServiceProvider serviceProvider;
 
-    private readonly int maxSeconds;
-
-    public RabbitMQSubscriberService(string serviceBusName, string serviceName, IRabbitMQConnection? connection, IServiceProvider? serviceProvider, int maxSeconds) : base(serviceBusName, serviceName, connection)
+    public RabbitMQSubscriberService(string serviceBusName, string serviceName, IRabbitMQConnection? connection, IServiceProvider? serviceProvider) : base(serviceBusName, serviceName, connection)
     {
         if (serviceProvider is null) throw new ArgumentNullException(nameof(serviceProvider));
 
         this.serviceProvider = serviceProvider;
-        this.maxSeconds = maxSeconds;
     }
 
-    public void Subscribe<TEvent>(string routingKey) where TEvent : Event
+    public void Subscribe<TEvent>(string routingKey, CancellationToken cancellationToken) where TEvent : Event
     {
-        Configure(routingKey).Consume<TEvent>(routingKey);
+        Configure(routingKey).Consume<TEvent>(routingKey, cancellationToken);
+    }
+
+    public void Dispose()
+    {
+        channel.Close();
     }
 
     private RabbitMQSubscriberService Configure(string routingKey)
@@ -49,7 +51,7 @@ public sealed class RabbitMQSubscriberService : RabbitMQService, ISubscribeServi
         return this;
     }
 
-    private void Consume<TEvent>(string routingKey) where TEvent : Event
+    private void Consume<TEvent>(string routingKey, CancellationToken cancellationToken) where TEvent : Event
     {
         var consumer = new EventingBasicConsumer(channel);
         var consumerTag = Guid.NewGuid().ToString();
@@ -64,9 +66,6 @@ public sealed class RabbitMQSubscriberService : RabbitMQService, ISubscribeServi
 
                 if (@event is not null && eventHandler is not null)
                 {
-                    var source = new CancellationTokenSource();
-                    source.CancelAfter(maxSeconds * 1000);
-                    var cancellationToken = source.Token;
                     await eventHandler.HandleAsync(@event, cancellationToken);
                 }
 

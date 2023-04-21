@@ -1,13 +1,24 @@
-using Microsoft.Extensions.DependencyInjection;
-
 namespace CPX.Events.Infrastructure.AMQP.RabbitMQ.Http.Extensions;
 
-public abstract class RabbitMQConfiguration
+public sealed class RabbitMQConfiguration
 {
-    protected readonly IServiceCollection services;
+    private readonly RabbitMQSubscriberConfiguration subscriberConfiguration;
+    
+    private readonly RabbitMQPublisherConfiguration publisherConfiguration;
 
-    protected RabbitMQConfiguration(IServiceCollection services)
+    public RabbitMQConfiguration(RabbitMQSubscriberConfiguration subscriberConfiguration, RabbitMQPublisherConfiguration publisherConfiguration)
     {
-        this.services = services;
+        this.subscriberConfiguration = subscriberConfiguration;
+        this.publisherConfiguration = publisherConfiguration;
+    }
+
+    public void UseConsumers(Action<RabbitMQSubscriberConfiguration> action)
+    {
+        action.Invoke(subscriberConfiguration);
+    }
+
+    public void UseProducers(Action<RabbitMQPublisherConfiguration> action)
+    {
+        action.Invoke(publisherConfiguration);
     }
 }

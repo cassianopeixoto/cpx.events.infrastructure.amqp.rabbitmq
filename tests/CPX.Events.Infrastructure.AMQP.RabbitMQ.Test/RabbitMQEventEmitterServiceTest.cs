@@ -15,7 +15,7 @@ public sealed class RabbitMQEventEmitterServiceTest
         // Assert
         Assert.Throws<ArgumentNullException>(() =>
         {
-            new RabbitMQEventEmitterService(routingKey, publishService);
+            new RabbitMQEventEmitterService<FooEvent>(routingKey, publishService);
         });
     }
 
@@ -30,10 +30,10 @@ public sealed class RabbitMQEventEmitterServiceTest
         mockPublishService.Setup(o => o.Publish(routingKey, @event)).Verifiable();
         var publishService = mockPublishService.Object;
         // Act
-        var rabbitMQEventEmitterService = new RabbitMQEventEmitterService(routingKey, publishService);
+        var rabbitMQEventEmitterService = new RabbitMQEventEmitterService<FooEvent>(routingKey, publishService);
         rabbitMQEventEmitterService.Emit(@event);
         // Assert
-        Assert.IsAssignableFrom<IEventEmitterService>(rabbitMQEventEmitterService);
+        Assert.IsAssignableFrom<IEventEmitterService<FooEvent>>(rabbitMQEventEmitterService);
         mockPublishService.VerifyAll();
     }
 }

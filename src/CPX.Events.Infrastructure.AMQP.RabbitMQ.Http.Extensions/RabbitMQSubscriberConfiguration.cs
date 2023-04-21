@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CPX.Events.Infrastructure.AMQP.RabbitMQ.Http.Extensions;
 
-public abstract class RabbitMQSubscriberConfiguration : RabbitMQConfiguration
+public sealed class RabbitMQSubscriberConfiguration : Configuration
 {
     private readonly IDictionary<Type, string> configuration;
 

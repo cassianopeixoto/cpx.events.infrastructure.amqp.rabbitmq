@@ -3,7 +3,7 @@ using CPX.Events.Infrastructure.AMQP.Abstract;
 
 namespace CPX.Events.Infrastructure.AMQP.RabbitMQ;
 
-public sealed class RabbitMQEventEmitterService : IEventEmitterService
+public sealed class RabbitMQEventEmitterService<TEvent> : IEventEmitterService<TEvent> where TEvent : Event
 {
     private readonly string routingKey;
 
@@ -17,7 +17,7 @@ public sealed class RabbitMQEventEmitterService : IEventEmitterService
         this.publishService = publishService;
     }
 
-    public void Emit(Event @event)
+    public void Emit(TEvent @event)
     {
         publishService.Publish(routingKey, @event);
     }

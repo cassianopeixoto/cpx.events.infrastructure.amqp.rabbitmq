@@ -7,7 +7,7 @@ namespace CPX.Events.Infrastructure.AMQP.RabbitMQ.Http.Extensions;
 
 public static class RabbitMQExtensions
 {
-    public static IServiceCollection AddEventBus(this IServiceCollection services, EventBusConfiguration configuration, Action<RabbitMQConfiguration> configure)
+    public static IServiceCollection AddRabbitMQ(this IServiceCollection services, EventBusConfiguration configuration, Action<RabbitMQConfiguration> configure)
     {
         services.AddSingleton<IRabbitMQConnection, RabbitMQConnection>((p) =>
         {
